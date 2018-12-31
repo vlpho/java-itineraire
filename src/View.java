@@ -92,9 +92,9 @@ public class View extends JFrame {
 	    
 	    for (Route route: model.getRoutes()) {
 			try {
-					Ville ville1 = route.getVille1();
-					Ville ville2 = route.getVille2();
-					g2.drawLine(ville1.getX(), ville1.getY(), ville2.getX(), ville2.getY());
+				Ville ville1 = route.getVille1();
+				Ville ville2 = route.getVille2();
+				g2.drawLine(ville1.getX(), ville1.getY(), ville2.getX(), ville2.getY());
 			} catch (Exception e) {
 				System.out.println("\nError route from " + route.getVille1().getNom() + " to " + route.getVille2().getNom() + "\n");
 				System.out.println("\ngetMessage() : " + e.getMessage());
@@ -131,8 +131,6 @@ public class View extends JFrame {
 	}
 
 	private void peindreVilleFocus (Graphics g) {		
-		//if((villeFocus != null) 
-		//|| (shortestPath.get(0).getName().equalsIgnoreCase(villeFocus.getNom()))) {
 		if(villeFocus != null) { 
 		    Font fontBold = new Font("Courier",Font.BOLD,20); 
 			g.setFont(fontBold);
