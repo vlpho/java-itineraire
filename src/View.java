@@ -65,7 +65,11 @@ public class View extends JFrame {
 	public void paint(Graphics g) {
 		//System.out.println("View.paint");
 		super.paint(g);
-		
+		peindreVilles(g);
+		peindreRoutes(g);
+	}
+
+	private void peindreVilles (Graphics g) {
 		Font fontPlain = new Font("Courier",Font.PLAIN,15); 
 	    Font fontBold = new Font("Courier",Font.BOLD,20); 
 	    for (Ville ville : model.getVilles()) {
@@ -79,12 +83,18 @@ public class View extends JFrame {
 			}
 			g.drawRect(ville.getX(), ville.getY(), 10, 10);
 			g.drawString(ville.getNom(), ville.getX(), ville.getY());
-		}
-	    
-	    Graphics2D g2 = (Graphics2D) g;
+		}		
+	}
+	
+	private void peindreRoutes(Graphics g) {
+	    Font fontPlain = new Font("Courier",Font.PLAIN,15); 
+	    Font fontBold = new Font("Courier",Font.BOLD,20); 
+
+		Graphics2D g2 = (Graphics2D) g;
 	    BasicStroke	strokeThin = new BasicStroke(1);	// epaisseur de trait
 	    BasicStroke strokeBold = new BasicStroke(3);
-		for (Route route: model.getRoutes()) {
+
+	    for (Route route: model.getRoutes()) {
 			try {
 					Ville ville1 = route.getVille1();
 					Ville ville2 = route.getVille2();
