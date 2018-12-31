@@ -79,7 +79,7 @@ public class View extends JFrame {
 		    g.setColor(Color.black);
 			g.drawRect(ville.getX(), ville.getY(), 10, 10);
 			g.drawString(ville.getNom(), ville.getX(), ville.getY());
-		}		
+		}
 	}
 	
 	private void peindreRoutes(Graphics g) {
