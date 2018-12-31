@@ -67,20 +67,16 @@ public class View extends JFrame {
 		super.paint(g);
 		peindreVilles(g);
 		peindreRoutes(g);
+		peindreShortestPath(g);
+		peindreVilleFocus(g);
+		peindreRouteFocus(g);
 	}
 
 	private void peindreVilles (Graphics g) {
 		Font fontPlain = new Font("Courier",Font.PLAIN,15); 
-	    Font fontBold = new Font("Courier",Font.BOLD,20); 
 	    for (Ville ville : model.getVilles()) {
 			g.setFont(fontPlain);
 		    g.setColor(Color.black);
-			if((villeFocus != null && villeFocus.equals(ville))
-			|| (routeFocus != null && routeFocus.traverseVille(ville))
-			|| (shortestPath.get(0).getName().equalsIgnoreCase(ville.getNom()))) {
-				g.setFont(fontBold);
-			    g.setColor(Color.blue);
-			}
 			g.drawRect(ville.getX(), ville.getY(), 10, 10);
 			g.drawString(ville.getNom(), ville.getX(), ville.getY());
 		}		
@@ -88,33 +84,16 @@ public class View extends JFrame {
 	
 	private void peindreRoutes(Graphics g) {
 	    Font fontPlain = new Font("Courier",Font.PLAIN,15); 
-	    Font fontBold = new Font("Courier",Font.BOLD,20); 
-
-		Graphics2D g2 = (Graphics2D) g;
 	    BasicStroke	strokeThin = new BasicStroke(1);	// epaisseur de trait
-	    BasicStroke strokeBold = new BasicStroke(3);
-
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setFont(fontPlain);
+	    g2.setStroke(strokeThin);	// methode setStroke n'existe qu'en Graphic2D
+	    g2.setColor(Color.red);
+	    
 	    for (Route route: model.getRoutes()) {
 			try {
 					Ville ville1 = route.getVille1();
 					Ville ville2 = route.getVille2();
-					g2.setFont(fontPlain);
-				    g2.setStroke(strokeThin);	// methode setStroke n'existe qu'en Graphic2D
-				    g2.setColor(Color.red);
-					if (shortestPath != null && route.element2ShortestPath(shortestPath)) {
-						g2.setFont(fontBold);
-						g2.setStroke(strokeBold);
-						g2.setColor(Color.blue);
-					}
-					if(routeFocus != null && routeFocus.equals(route)) {
-						// calcul Point(distanceX, distanceY) = milieu du segment [ville1, ville2]
-					    int distanceX = ville1.getX() + ((ville2.getX() - ville1.getX()) / 2);
-					    int distanceY = ville1.getY() + ((ville2.getY() - ville1.getY()) / 2);
-						g2.setFont(fontBold);
-					    g2.setStroke(strokeBold);
-					    g2.setColor(Color.magenta);
-					    g2.drawString(Integer.toString(routeFocus.getDistance()), distanceX, distanceY);	// afficher distance au milieu du segment
-					}
 					g2.drawLine(ville1.getX(), ville1.getY(), ville2.getX(), ville2.getY());
 			} catch (Exception e) {
 				System.out.println("\nError route from " + route.getVille1().getNom() + " to " + route.getVille2().getNom() + "\n");
@@ -122,6 +101,69 @@ public class View extends JFrame {
 				System.out.println("\ntoString() : " + e.toString());
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private void peindreShortestPath (Graphics g) {
+		if (shortestPath != null) {
+		    Font fontBold = new Font("Courier",Font.BOLD,20); 
+		    BasicStroke strokeBold = new BasicStroke(3);
+
+		    Ville ville = model.villeParNom(shortestPath.get(0).getName());
+			g.setFont(fontBold);
+		    g.setColor(Color.blue);	
+			g.drawRect(ville.getX(), ville.getY(), 10, 10);
+			g.drawString(ville.getNom(), ville.getX(), ville.getY());
+
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setFont(fontBold);
+			g2.setStroke(strokeBold);
+			g2.setColor(Color.blue);
+
+		    for (Route route: model.getRoutes()) {
+		    	if (route.element2ShortestPath(shortestPath)) {
+					Ville ville1 = route.getVille1();
+					Ville ville2 = route.getVille2();
+					g2.drawLine(ville1.getX(), ville1.getY(), ville2.getX(), ville2.getY());
+		    	}
+		    }
+		}
+	}
+
+	private void peindreVilleFocus (Graphics g) {		
+		//if((villeFocus != null) 
+		//|| (shortestPath.get(0).getName().equalsIgnoreCase(villeFocus.getNom()))) {
+		if(villeFocus != null) { 
+		    Font fontBold = new Font("Courier",Font.BOLD,20); 
+			g.setFont(fontBold);
+		    g.setColor(Color.blue);
+			g.drawRect(villeFocus.getX(), villeFocus.getY(), 10, 10);
+			g.drawString(villeFocus.getNom(), villeFocus.getX(), villeFocus.getY());
+		}
+	}
+	
+	private void peindreRouteFocus (Graphics g) {		
+		if (routeFocus != null) {
+		    Font fontBold = new Font("Courier",Font.BOLD,20); 
+		    BasicStroke strokeBold = new BasicStroke(3);
+			Graphics2D g2 = (Graphics2D) g;
+
+			Ville ville1 = routeFocus.getVille1();
+			Ville ville2 = routeFocus.getVille2();
+			// calcul Point(distanceX, distanceY) = milieu du segment [ville1, ville2]
+		    int distanceX = ville1.getX() + ((ville2.getX() - ville1.getX()) / 2);
+		    int distanceY = ville1.getY() + ((ville2.getY() - ville1.getY()) / 2);
+
+			g.setFont(fontBold);
+			g.setColor(Color.magenta);
+			g.drawString(ville1.getNom(), ville1.getX(), ville1.getY());
+			g.drawString(ville2.getNom(), ville2.getX(), ville2.getY());
+
+			g2.setFont(fontBold);
+		    g2.setStroke(strokeBold);
+		    g2.setColor(Color.magenta);
+		    g2.drawString(Integer.toString(routeFocus.getDistance()), distanceX, distanceY);	// afficher distance au milieu du segment
+			g2.drawLine(ville1.getX(), ville1.getY(), ville2.getX(), ville2.getY());			
 		}
 	}
 
